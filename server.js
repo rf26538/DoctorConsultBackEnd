@@ -6,11 +6,6 @@ const cors = require("cors");
 const bodyParser = require("body-parser")
 require("dotenv").config();
 
-
-
-
-
-
 const app = express();
 
 // Helmet is security middleware for express it helps protect your app
@@ -20,5 +15,17 @@ app.use(helmet())
 // Morgan used for logger
 app.use(morgan('dev'))
 app.use(cors({
-    origin : (process.env.ALLOWED_ORIGINS || "").split(",").map(s => s.trim()).filter(Boolean)
+    origin : (process.env.ALLOWED_ORIGINS || "").split(",").map(s => s.trim()).filter(Boolean) || "*",
+    credentials : true
 }))
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended : true}));
+
+app.get("/healt", (req, res) => {
+    res.ok({time : new Date().toISOString()}, "ok")
+})
+
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => console.log(`Server is listing on port : ${PORT}`))
